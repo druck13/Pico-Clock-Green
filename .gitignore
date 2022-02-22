@@ -1,0 +1,9 @@
+.gitignore
+CMakeFiles/
+CMakeLists.txt.user
+build/
+cmake_install.cmake
+elf2uf2/
+generated/
+pico-sdk/
+Makefile
