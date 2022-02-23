@@ -10,21 +10,21 @@
 #include "Ds3231.h"
 #include "ziku.h"
 unsigned char month_date[2][12]={{31,29,31,30,31,30,31,31,30,31,30,31},
-                                {31,28,31,30,31,30,31,31,30,31,30,31}};//判断闰年和非闰年每个月的天数
-unsigned char disp_buf[112];//缓冲区字节，对应24x8个点及滚动字节
-unsigned char CS_cnt;//行选计数
-unsigned char UP_id=0,UP_Key_flag=0,KEY_Set_flag=0,No_operation_flag=0,No_operation_count;//触发按键检测
+                                {31,28,31,30,31,30,31,31,30,31,30,31}}; // Determining the number of days in a month in leap years and non-leap years 
+unsigned char disp_buf[112]; // Buffer bytes, corresponding to 24x8 points and scroll bytes 
+unsigned char CS_cnt; // row select count 
+unsigned char UP_id=0,UP_Key_flag=0,KEY_Set_flag=0,No_operation_flag=0,No_operation_count; // Trigger key detection 
 unsigned char adc_light_flag = 0,adc_light_time_flag = 0,light_set = 0;
-uint16_t adc_light,adc_light_count = 0; //设置自动亮度
+uint16_t adc_light,adc_light_count = 0; // Set automatic brightness 
 unsigned char set_id=0,update_time = 0,scroll_start_count = 0,scroll_show_flag = 0,scroll_show_start =0;
-unsigned char alarm_id = 0,alarm_flag = 0,beep_sta = 1,beep_flag=0,beep_on_flag = 0,beep_on_count = 0,scroll_flag = 0,scroll_sta = 0,scroll_count = 0,scroll_start = 0;//蜂鸣器及滚动
+unsigned char alarm_id = 0,alarm_flag = 0,beep_sta = 1,beep_flag=0,beep_on_flag = 0,beep_on_count = 0,scroll_flag = 0,scroll_sta = 0,scroll_count = 0,scroll_start = 0; // buzzer & scroll 
 unsigned  char alarm_hour_temp = 0,alarm_min_temp = 0,alarm_hour_flag = 0,alarm_min_flag = 0,alarm_day_select_flag = 0,alarm_day_select = 1;
 unsigned char Set_time_hour_flag = 0,Set_time_min_flag = 0,Set_time_year_flag = 0,Set_time_month_flag = 0,Set_time_dayofmonth_flag = 0,Set_hour_temp = 0,Set_min_temp = 0,change_time_flag = 0;
-unsigned char alarm_select_flag = 0,alarm_open_flag = 0,alarm_select_sta = 0,alarm_open_sta = 0,hour_temp,min_temp,year_temp,month_temp,dayofmonth_temp,year_high_temp = 20;//闹钟及时间
+unsigned char alarm_select_flag = 0,alarm_open_flag = 0,alarm_select_sta = 0,alarm_open_sta = 0,hour_temp,min_temp,year_temp,month_temp,dayofmonth_temp,year_high_temp = 20; // Alarm and time 
 unsigned char Min_count=0,alarm_star_flag = 0,Timing_show_count = 0,Timing_show_sec = 0;
 uint16_t KEY_cnt=0,UP_cnt=0,Exit_cnt = 0,Flashing_count = 0,whole_year,adc_count = 0,write_flag = 0;
-unsigned char Timing_mode_flag = 0,Timing_mode_sta = 2,Timing_min_flag = 0,Timing_sec_flag = 0,Timing_min_temp = 0,Timing_sec_temp = 0,Timing_DN_flag = 0,Timing_UP_Key_flag = 0,Timing_DN_close_flag = 0;//计时
-unsigned char Time_set_mode_flag = 0,Time_set_mode_sta = 0,Full_time_flag = 0,Full_time_sta = 0,Full_time_alarm_count = 5;//整点报时、时间模式
+unsigned char Timing_mode_flag = 0,Timing_mode_sta = 2,Timing_min_flag = 0,Timing_sec_flag = 0,Timing_min_temp = 0,Timing_sec_temp = 0,Timing_DN_flag = 0,Timing_UP_Key_flag = 0,Timing_DN_close_flag = 0; // timing
+unsigned char Time_set_mode_flag = 0,Time_set_mode_sta = 0,Full_time_flag = 0,Full_time_sta = 0,Full_time_alarm_count = 5; // Hourly time chime, time mode 
 char Time_buf[4];
 unsigned char i,jr,save_buf,adc_show_flag = 0,adc_show_time = 6;
 TIME_RTC Time_RTC;
@@ -32,20 +32,20 @@ TIME_RTC Time_RTC;
 unsigned char flag_Flashing[11]={0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff};
 unsigned char temp_high,temp_low,temp_sta = 0,get_add_high = 0x11,get_add_low = 0x12;
 void get_temperature();
-void display_char(unsigned char x,unsigned char dis_char); //对需要显示的数据进行存放
+void display_char(unsigned char x,unsigned char dis_char); // Store the data that needs to be displayed 
 void send_data(unsigned char data); 
-void cls_disp(unsigned char x); //清数据
+void cls_disp(unsigned char x); // clear data 
 void select_weekday(unsigned char x); 
-bool repeating_timer_callback_ms(struct repeating_timer *t); //1ms回调函数
-bool repeating_timer_callback_s(struct repeating_timer *t);//1s 回调函数
+bool repeating_timer_callback_ms(struct repeating_timer *t); // 1ms callback function 
+bool repeating_timer_callback_s(struct repeating_timer *t); // 1s callback function 
 bool repeating_timer_callback_us(struct repeating_timer *t);
-void dis_SetMode(); //普通模式设置
-void dis_Timing();  //计时模式设置
-void dis_alarm(); //闹钟模式设置
-void dis_scroll(); //滚动显示
+void dis_SetMode(); // Normal mode settings 
+void dis_Timing();  // Timekeeping Mode Settings
+void dis_alarm(); // Alarm Mode Settings 
+void dis_scroll(); // scroll 
 uint16_t get_ads1015();
-unsigned char get_month_date(uint16_t year,uint8_t month_cnt);//获取当年的月份天数
-unsigned char get_weekday(uint16_t year,uint8_t month_cnt,uint8_t date_cnt);//基姆拉尔森计算公式:Weekday= (day+2*mon+3*(mon+1)/5+year+year/4-year/100+year/400) % 7
+unsigned char get_month_date(uint16_t year,uint8_t month_cnt); // Get the month number of the current year
+unsigned char get_weekday(uint16_t year,uint8_t month_cnt,uint8_t date_cnt); // Kim Larson calculation formula: Weekday= (day+2*mon+3*(mon+1)/5+year+year/4-year /100+year/400) % 7
 void show_adc();
 void Alarm_set(uint8_t UP_DOWN_flag);
 void Timing_set(uint8_t UP_DOWN_flag);
@@ -58,7 +58,7 @@ void beep_start_judge();
 void EXIT();
 void Special_Exit();
 struct repeating_timer timer2;
-int port_init(void) //GPIO初始化
+int port_init(void) // GPIO initialization
 {
     stdio_init_all();
     gpio_init(A0);
@@ -89,7 +89,7 @@ int port_init(void) //GPIO初始化
 
   
 
-    //iic config
+    // iic config
 
     i2c_init(I2C_PORT, 100000);
     gpio_set_function(SDA, GPIO_FUNC_I2C);
@@ -100,7 +100,7 @@ int port_init(void) //GPIO初始化
     
 
 
-    //adc config
+    // adc config
     adc_init();
 
     // Make sure GPIO is high-impedance, no pullups etc
@@ -140,13 +140,13 @@ int main(void)
             }
             
         }
-        if(KEY_Set_flag == 1) //设置按钮被单击，进入普通设置模式
+        if(KEY_Set_flag == 1) // Set button is clicked, enter normal setting mode
         {
             No_operation_flag = 1;
             dis_SetMode();
             KEY_Set_flag = 0;
         }
-        if(alarm_flag == 1)//长按进入闹钟设置
+        if(alarm_flag == 1) // Long press to enter the alarm setting
         {
             No_operation_flag = 1;
             dis_alarm();
@@ -158,7 +158,7 @@ int main(void)
             dis_Timing();
             UP_Key_flag = 0;
         }
-        if(update_time == 1)//刷新时间
+        if(update_time == 1) // Refresh time
         {
             Show_Time();
             update_time = 0;
@@ -167,7 +167,7 @@ int main(void)
     return 0;
 
 }
-bool repeating_timer_callback_us(struct repeating_timer *t) //us
+bool repeating_timer_callback_us(struct repeating_timer *t) // us
 {
     if(adc_light >2800)
     {
@@ -189,37 +189,41 @@ bool repeating_timer_callback_us(struct repeating_timer *t) //us
 }
 
 
-bool repeating_timer_callback_ms(struct repeating_timer *t) { //1ms进入一次
+bool repeating_timer_callback_ms(struct repeating_timer *t) { // 1ms enter once
     unsigned char i;
 	adc_show_count(); 
     beep_stop_judge();
     Flashing_start_judge(); 
     scroll_show_judge();
-    if(gpio_get(SET_FUNCTION) == 0) //检测设置按钮是否被按下
+    if(gpio_get(SET_FUNCTION) == 0) // Detect if the set button is pressed
     {
         KEY_cnt++;
     }
     else
     {
-        if(KEY_cnt>50&&KEY_cnt < 300)//少于300ms判断为短按,设置键短按为模式切换
+        // If it is less than 300ms, it is judged as a short press,
+        // and the short press of the setting key is a mode switch
+        if(KEY_cnt>50&&KEY_cnt < 300)
         {
             KEY_cnt = 0;
             if(alarm_id == 1)
-                alarm_flag = 1;    //进入闹钟设置模式
+                alarm_flag = 1;    // Enter the alarm setting mode
             else if(UP_id ==1)
-                UP_Key_flag = 1;  //进入计时设置模式
+                UP_Key_flag = 1;  // Enter timing setting mode
             else
-                KEY_Set_flag = 1; //进入普通设置模式 （外部时钟设置、按键声音开关设置、滚动开关设置、时钟显示模式设置）
+                // Enter the normal setting mode (external clock setting, key sound switch setting,s
+                // scroll switch setting, clock display mode setting)
+                KEY_Set_flag = 1;
             beep_start_judge();
             EXIT();
             set_id++;	
         }
-        else if(KEY_cnt >300&&set_id == 0) //大于300ms判断为长按
+        else if(KEY_cnt >300&&set_id == 0) // If it is greater than 300ms, it is judged as a long press
         {
             if(set_id == 0)
             {
                 set_id ++;
-                alarm_flag = 1;  //设置按键长按进入闹钟设置
+                alarm_flag = 1;  // Long press the setting button to enter the alarm setting
                 alarm_id = 1;
             }
             KEY_cnt = 0;
@@ -227,80 +231,18 @@ bool repeating_timer_callback_ms(struct repeating_timer *t) { //1ms进入一次
         }
         else KEY_cnt = 0;
     }
-    if(gpio_get(UP) == 0) //+标号
-    {
-        UP_cnt++;
-    }
-    else
-    {
-        if(UP_cnt>50 && UP_cnt < 300)//少于300ms判断为短按,短按+、-键可以改变功能的状态
-        {
-            UP_cnt = 0;
-            No_operation_count = 0;
-            if(set_id == 0)
-            {
-                temp_sta = !temp_sta;
-                if(temp_sta == 0)
-                {
-                    dis_C_flag;
-                    dis_F_flag_close;
-                }
-                else
-                {
-                    dis_C_flag_close;
-                    dis_F_flag;
-                }
-            }
-            if(beep_flag == 1) //按键声音可设置标志位
-            {
-                beep_sta = !beep_sta;
-            }
-            
-            beep_start_judge();
-            if(scroll_flag == 1)//滚动开关可设置标志位
-            {
-                scroll_sta = !scroll_sta;
-                if(scroll_sta != 0)
-                {
-                    dis_move_open;
-                }
-                else
-                {
-                    dis_move_close;
-                }
-            }
-            Alarm_set(UP_flag);
-			Timing_set(UP_flag);
-			Time_set(UP_flag);
-            if(Full_time_flag == 1)
-            {
-                Full_time_sta = !Full_time_sta;
-            }
-        }
-        else if(UP_cnt >300&&set_id == 0) //大于300ms判断为长按
-        {
-            if(set_id == 0)
-            {
-                UP_Key_flag = 1;
-                UP_id = 1;
-                set_id ++ ;
-            }
-            UP_cnt = 0;
-            beep_start_judge();
-        }
-
-        else UP_cnt = 0;
-    }
-    if(gpio_get(DOWN) == 0) //-标号
+    if(gpio_get(UP) == 0) // +label
     {
        Exit_cnt++;
     }
     else
     {
-        if(Exit_cnt>0&&Exit_cnt< 300)//少于300ms判断为短按,短按+、-键可以改变功能的状态
+        // If it is less than 300ms, it is judged as a short press.
+        // Short press the + and - keys to change the state of the function
+        if(Exit_cnt>0&&Exit_cnt< 300)
         {
             No_operation_count = 0;
-            if(set_id == 0 )//自动亮度开关
+            if(set_id == 0 ) // Auto brightness switch
             {
                 adc_light_flag = !adc_light_flag;
                 if(adc_light_flag !=0)
@@ -312,13 +254,13 @@ bool repeating_timer_callback_ms(struct repeating_timer *t) { //1ms进入一次
                     dis_Auto_light_close;
                 }
             }
-            if(beep_flag == 1)//按键声音可设置标志位
+            if(beep_flag == 1) // The key sound can set the flag bit
             {
 
                 beep_sta = !beep_sta;
             }
             beep_start_judge();
-            if(scroll_flag == 1)//滚动开关可设置标志位
+            if(scroll_flag == 1) // The scroll switch can set the flag bit
             {
                 scroll_sta = !scroll_sta;
                 if(scroll_sta != 0)
@@ -339,7 +281,8 @@ bool repeating_timer_callback_ms(struct repeating_timer *t) { //1ms进入一次
 			Time_set(DOWN_flag);
             Exit_cnt = 0;
         }
-        else if(Exit_cnt >300&&set_id != 0) //大于300ms判断为长按 ,任何设置模式下,可以退出设置模式
+        // If it is longer than 300ms, it is judged as a long press. In any setting mode, you can exit the setting mode
+        else if(Exit_cnt >300&&set_id != 0)
         {
             beep_start_judge();
             Special_Exit();
@@ -393,7 +336,7 @@ bool repeating_timer_callback_ms(struct repeating_timer *t) { //1ms进入一次
     }
     return true;
 }
-bool repeating_timer_callback_s(struct repeating_timer *t)//1s 进入一次
+bool repeating_timer_callback_s(struct repeating_timer *t) // 1s enter once
 {
 
     Min_count++;
@@ -403,7 +346,7 @@ bool repeating_timer_callback_s(struct repeating_timer *t)//1s 进入一次
         alarm_star_flag = 0;
     }
 
-    if(Min_count==60)//每分钟刷新一次时间
+    if(Min_count==60) // Refresh time every minute
     {
         if(alarm_open_sta != 0)
         {
@@ -423,7 +366,7 @@ bool repeating_timer_callback_s(struct repeating_timer *t)//1s 进入一次
     if(No_operation_flag == 1)
     {
         No_operation_count++;
-        if(No_operation_count == 10 )//10秒内无任何操作则退出设置模式
+        if(No_operation_count == 10 ) // Exit setting mode if there is no operation within 10 seconds
         {
             Special_Exit();
             EXIT();
@@ -447,7 +390,7 @@ bool repeating_timer_callback_s(struct repeating_timer *t)//1s 进入一次
     {
         scroll_count = 0;
     }
-    if(scroll_count == 120 && set_id == 0) //滚动间隔时间
+    if(scroll_count == 120 && set_id == 0) // scroll interval time
     {
         scroll_show_flag = 1;
         scroll_count = 0;
@@ -518,12 +461,12 @@ bool repeating_timer_callback_s(struct repeating_timer *t)//1s 进入一次
 
 void show_adc()
 {
-    const float conversion_factor = 3.3f / (1 << 12);//计算电压
+    const float conversion_factor = 3.3f / (1 << 12); // Calculate the voltage
     uint16_t result = adc_read();
     float voltage = 3 *result * conversion_factor;
-    uint8_t Single_digit = (int)voltage;//个位数
-    uint8_t Decile = (int)(voltage*10)%10;//十分位
-    uint8_t Percentile = (int)(voltage*100)%10;//百分位
+    uint8_t Single_digit = (int)voltage; // Single digit
+    uint8_t Decile = (int)(voltage*10)%10; // Decile
+    uint8_t Percentile = (int)(voltage*100)%10; // Percentile
     display_char(0,Single_digit+'0');
     display_char(5,'.');
     display_char(7,Decile+'0');
@@ -532,7 +475,7 @@ void show_adc()
 
 }
 
-void select_weekday(unsigned char x)//显示星期几
+void select_weekday(unsigned char x) // Display the day of the week
 {
     switch(x)
     {
@@ -546,7 +489,7 @@ void select_weekday(unsigned char x)//显示星期几
     }
 }
 
-void cls_disp(unsigned char x)//清除x位置后的显示内容
+void cls_disp(unsigned char x) // /Clear the display content after the x position
 {
     do
     {
@@ -554,7 +497,8 @@ void cls_disp(unsigned char x)//清除x位置后的显示内容
         x+=8;
     }while(x<sizeof(disp_buf));
 }
-void send_data(unsigned char data)//发送数据函数
+
+void send_data(unsigned char data) // Send data function
 {
     unsigned char i;
     for(i=0;i<8;i++)
@@ -575,9 +519,9 @@ void send_data(unsigned char data)//发送数据函数
 void display_char(unsigned char x,unsigned char dis_char)
 {
     unsigned char i,j,k;
-    x+=disp_offset;//加上状态指示灯的偏移
-    j=x/8;//要显示是第几个点阵序号
-    k=x%8;//在第几个bit开始显示
+    x+=disp_offset; // Add the offset of the status indicator
+    j=x/8; // The number of the dot matrix to be displayed
+    k=x%8; // Start to display at the first bit
     if((dis_char>='0')&&(dis_char<='9'))
         dis_char-=0x30;
     else if((dis_char>='A')&&(dis_char<='F'))
@@ -606,7 +550,7 @@ void display_char(unsigned char x,unsigned char dis_char)
         if(k>0)
         {
 
-            disp_buf[8*j+i]=(disp_buf[8*j+i]&(0xff>>(8-k)))|((ZIKU[dis_char*7+i-1])<<k);//保留需要的数据位
+            disp_buf[8*j+i]=(disp_buf[8*j+i]&(0xff>>(8-k)))|((ZIKU[dis_char*7+i-1])<<k); // reserve required data bits
             if(j<(sizeof(disp_buf)/8)-1){
                 disp_buf[8*j+8+i]=(disp_buf[8*j+8+i]&(0xff<<(8-k)))|((ZIKU[dis_char*7+i-1])>>(8-k));
 
@@ -620,9 +564,9 @@ void display_char(unsigned char x,unsigned char dis_char)
     }
 }
 
-void Show_Time() //显示时间
+void Show_Time() // Display time
 {
-    Time_RTC=Read_RTC(); //获取RTC的值
+    Time_RTC=Read_RTC(); // Get the value of RTC
     display_char(0,'1');
     Time_RTC.seconds = Time_RTC.seconds&0x7F;
     Time_RTC.minutes = Time_RTC.minutes&0x7F;
@@ -635,7 +579,8 @@ void Show_Time() //显示时间
     dayofmonth_temp = BCD_to_Byte(Time_RTC.dayofmonth);
     month_temp = BCD_to_Byte(Time_RTC.month);
     year_temp = BCD_to_Byte(Time_RTC.year);
-    if(Time_set_mode_sta != 0)  //改变时间时需要注意当前的时间模式
+    // When changing the time, you need to pay attention to the current time mode
+    if(Time_set_mode_sta != 0)
     {
         if(Set_hour_temp > 12)
         {
@@ -664,7 +609,7 @@ void Show_Time() //显示时间
     Time_buf[1]=((hour_temp%10)+'0');
     Time_buf[2]=((Time_RTC.minutes/16)+'0');
     Time_buf[3]=((Time_RTC.minutes%16)+'0');
-    Min_count=((float)Time_RTC.seconds)/1.5; //计算当前RTC的秒数
+    Min_count=((float)Time_RTC.seconds)/1.5; // Calculate the number of seconds in the current RTC
     
     if(scroll_start == 0)
     {
@@ -685,7 +630,7 @@ void Show_Time() //显示时间
 }
 void dis_SetMode() 
 {
-    if(set_id < 3) //设置小时和分钟
+    if(set_id < 3) // set hour and minute
     {
         if(set_id == 1)
         {
@@ -976,7 +921,7 @@ void dis_Timing()
         {
             Timing_min_flag  = 1;
         }
-        else if (set_id == 2 && Timing_mode_sta == 0)//正计时设计
+        else if (set_id == 2 && Timing_mode_sta == 0) // Positive timing design
         {
             if(Timing_UP_Key_flag == 0)
             {
@@ -997,7 +942,7 @@ void dis_Timing()
             Timing_sec_flag = 1;
             Timing_DN_close_flag = 0;
         }
-        if(Timing_mode_sta == 1) //倒计时设计
+        if(Timing_mode_sta == 1) // Countdown design
         {
             display_char(0,Timing_min_temp/10+'0'&flag_Flashing[2]);
             display_char(5,Timing_min_temp%10+'0'&flag_Flashing[2]);
@@ -1007,7 +952,7 @@ void dis_Timing()
             cls_disp(26);
             Timing_show_sec = Timing_sec_temp;
         }
-        if(Timing_mode_sta == 0 && set_id == 3) //关闭正计时
+        if(Timing_mode_sta == 0 && set_id == 3) // Turn off positive timing
         {
             display_char(0,Timing_min_temp/10+'0');
             display_char(5,Timing_min_temp%10+'0');
@@ -1021,7 +966,7 @@ void dis_Timing()
         }
 
     }
-    else if(set_id == 4 && Timing_mode_sta == 1 && Timing_DN_close_flag == 0 && Timing_mode_sta != 2) //倒计时显示
+    else if(set_id == 4 && Timing_mode_sta == 1 && Timing_DN_close_flag == 0 && Timing_mode_sta != 2) // Countdown display
     {
         No_operation_count = 0;
         Timing_DN_flag = 1;
@@ -1064,7 +1009,7 @@ void get_temperature()
     i2c_read_blocking(I2C_PORT,Address, &temp_high,1,false);
     i2c_write_blocking(I2C_PORT, Address, &get_add_low, 1, true);
     i2c_read_blocking(I2C_PORT,Address, &temp_low,1,false);
-    temp_low = (temp_low >> 6)*25;//放大分辨率
+    temp_low = (temp_low >> 6)*25; // Enlarge the resolution
 }
 void dis_scroll()
 {
@@ -1119,7 +1064,7 @@ void dis_scroll()
     }
     for(i=1;i<8;i++)
     {
-       save_buf = disp_buf[i] & 0x03; //保留功能位
+       save_buf = disp_buf[i] & 0x03; // Retain function bits
         for(jr=0;jr<sizeof(disp_buf)/8;jr++)
         {
         
@@ -1129,10 +1074,11 @@ void dis_scroll()
             disp_buf[8*jr+i]=disp_buf[8*jr+i]>>1;
        
         }
-        disp_buf[i] = (disp_buf[i] & (~0x03)) | save_buf;//复原功能位
+        disp_buf[i] = (disp_buf[i] & (~0x03)) | save_buf; // Restore function bit
     } 
 }
-unsigned char get_month_date(uint16_t year_cnt,uint8_t month_cnt)//判断一个月的最大天数
+// Determine the maximum number of days in a month
+unsigned char get_month_date(uint16_t year_cnt,uint8_t month_cnt)
 {
     if((year_cnt%4==0&&year_cnt%100!=0)||year_cnt%400==0)
     {
@@ -1172,7 +1118,8 @@ unsigned char get_month_date(uint16_t year_cnt,uint8_t month_cnt)//判断一个�
         }    
     }
 }
-unsigned char get_weekday(uint16_t year_cnt,uint8_t month_cnt,uint8_t date_cnt)//根据年月日判断星期几
+// Determine the day of the week according to the year, month and day
+unsigned char get_weekday(uint16_t year_cnt,uint8_t month_cnt,uint8_t date_cnt)
 {
     uint8_t weekday = 8;
     if(month_cnt == 1 || month_cnt == 2)
@@ -1192,7 +1139,7 @@ unsigned char get_weekday(uint16_t year_cnt,uint8_t month_cnt,uint8_t date_cnt)/
         case 6 : return 6; break;
     }
 }
-uint16_t get_ads1015() //获取光敏传感器的值
+uint16_t get_ads1015() // Get the value of the photosensitive sensor
 {
     adc_select_input(0);
     uint16_t value = adc_read();
@@ -1200,7 +1147,7 @@ uint16_t get_ads1015() //获取光敏传感器的值
 }
 void Alarm_set(uint8_t UP_DOWN_flag)
 {
-	if(alarm_hour_flag == 1) //闹钟时钟可设置标志位
+	if(alarm_hour_flag == 1) // The alarm clock can set the flag bit
 	{
         if(UP_DOWN_flag == UP_flag)
         {
@@ -1226,7 +1173,7 @@ void Alarm_set(uint8_t UP_DOWN_flag)
 		    if(alarm_min_temp == 255)alarm_min_temp = 59;
         }
 	}
-	if(alarm_open_flag == 1)//闹钟开关可设置标志位
+	if(alarm_open_flag == 1) // The alarm switch can set the flag bit
 	{
 		alarm_open_sta = !alarm_open_sta;
 		if(alarm_open_sta != 0)
@@ -1238,7 +1185,7 @@ void Alarm_set(uint8_t UP_DOWN_flag)
 			dis_Alarm_close;
 		}
 	}
-	if(alarm_select_flag == 1)//闹钟选择可设置标志位
+	if(alarm_select_flag == 1) // The alarm clock selection can set the flag bit
 	{
 		alarm_select_sta = ! alarm_select_sta;
 	}
@@ -1299,7 +1246,7 @@ void Timing_set(uint8_t UP_DOWN_flag)
 			if(Timing_sec_temp == 255)Timing_sec_temp = 59;
 		}
 	}
-	if(Time_set_mode_flag == 1) //时间模式设置
+	if(Time_set_mode_flag == 1) // time mode setting
 	{
 		Time_set_mode_sta = !Time_set_mode_sta;
 		if(Time_set_mode_sta == 0)
@@ -1331,7 +1278,7 @@ void Timing_set(uint8_t UP_DOWN_flag)
 }
 void Time_set(uint8_t UP_DOWN_flag)
 {
-	if(Set_time_hour_flag == 1) //小时设置
+	if(Set_time_hour_flag == 1) // hour setting
 	{
 		change_time_flag = 1;
 		if(UP_DOWN_flag == UP_flag)
@@ -1344,7 +1291,8 @@ void Time_set(uint8_t UP_DOWN_flag)
 			Set_hour_temp--;
 			if(Set_hour_temp == 255)Set_hour_temp = 23;
 		}
-		if(Time_set_mode_sta != 0)  //改变时间时需要注意当前的时间模式
+        // When changing the time, you need to pay attention to the current time mode
+		if(Time_set_mode_sta != 0)
 		{
 			if(Set_hour_temp > 12)
 			{
@@ -1371,7 +1319,7 @@ void Time_set(uint8_t UP_DOWN_flag)
 			hour_temp = Set_hour_temp;
 		}
 	}
-	if(Set_time_min_flag == 1) //分钟设计
+	if(Set_time_min_flag == 1) // minute design
 	{
 		change_time_flag = 1;
 		if(UP_DOWN_flag == UP_flag)
@@ -1499,7 +1447,7 @@ void Flashing_start_judge()
 }
 void scroll_show_judge()
 {
-	if(scroll_start == 1) //每3分钟滚动一次
+	if(scroll_start == 1) // scroll every 3 minutes
     {
         scroll_start_count ++ ;
     }
@@ -1550,7 +1498,7 @@ void EXIT()
 		select_weekday(get_weekday(whole_year,month_temp,dayofmonth_temp)-1);
 	}
     flag_Flashing[set_id] = 0xff;
-    if(alarm_min_flag == 1) //防止显示为空
+    if(alarm_min_flag == 1) // prevent showing empty 
     {
         display_char(13,(alarm_min_temp/10+'0')&flag_Flashing[4]);
         display_char(18,(alarm_min_temp%10+'0')&flag_Flashing[4]);

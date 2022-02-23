@@ -44,7 +44,7 @@
 #define	A2_HIGH		gpio_put(A2, 1)
 
 
-//定义按键
+//define keys 
 #define SET_FUNCTION 2
 #define SDA 6
 #define SCL 7
@@ -60,10 +60,10 @@
 #define UP_flag 1
 #define DOWN_flag 0
 
-//------------定义左侧状态指示灯使用的个数---------
+//------------Define the number used by the left status indicator---------
 #define	disp_offset		2
 
-//定义 IIC
+//definition IIC
 #define I2C_PORT i2c1
 #define Address 0x68
 #define Address_ADS 0x48
@@ -84,7 +84,7 @@ typedef enum
     ALARM_MODE_SEC_MATCHED,
     ALARM_MODE_ONCE_PER_SECOND
 } AlarmMode;
-//----------------星期LED指示灯定义-------------------------
+//----------------Day of the week LED indicator definition -------------------------
 
 
 
@@ -102,7 +102,7 @@ typedef enum
 #define DisSaturday     {disp_buf[16]&= ~((1<<2)|(1<<3));}
 #define Sunday          {disp_buf[16]|=(1<<5)|(1<<6);}
 #define DisSunday       {disp_buf[16] &= ~((1<<5)|(1<<6));}
-//----------------状态LED指示灯定义-------------------------
+//----------------Status LED Indicator Definitions -------------------------
 #define dis_move_open           disp_buf[0]|= 0X03
 #define dis_move_close          disp_buf[0] &= ~0X03
 #define dis_Alarm_en            disp_buf[1]|= 0X03
