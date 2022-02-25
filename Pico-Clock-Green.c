@@ -169,10 +169,10 @@ int main(void)
 }
 bool repeating_timer_callback_us(struct repeating_timer *t) // us
 {
-    if(adc_light >4800)
+    if(adc_light >3600)
     {
         light_set ++;
-        if(light_set == 6)
+        if(light_set == 15)
         {
             OE_OPEN;
             light_set = 0;
@@ -407,7 +407,7 @@ bool repeating_timer_callback_ms(struct repeating_timer *t) { // 1ms enter once
     if(adc_light_flag != 0)
     {
         adc_light_time_flag = 1;
-        add_repeating_timer_us(150, repeating_timer_callback_us, NULL, &timer2);
+        add_repeating_timer_us(50, repeating_timer_callback_us, NULL, &timer2);
     }
     else
     {
