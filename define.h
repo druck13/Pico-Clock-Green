@@ -44,7 +44,7 @@
 #define	A2_HIGH		gpio_put(A2, 1)
 
 
-//define keys 
+//define keys
 #define SET_FUNCTION 2
 #define SDA 6
 #define SCL 7
@@ -97,7 +97,7 @@ typedef enum
 #define Thursday        {disp_buf[8]|=(1<<4)|(1<<5);}
 #define DisThursday     {disp_buf[8] &= ~((1<<4)|(1<<5));}
 #define Friday          {disp_buf[8]|=(1<<7);disp_buf[16]|=(1<<0);}
-#define DisFriday        {disp_buf[8] &= ~(1<<7);disp_buf[16] &= ~(1<<0);}
+#define DisFriday       {disp_buf[8] &= ~(1<<7);disp_buf[16] &= ~(1<<0);}
 #define Saturday        {disp_buf[16]|=(1<<2)|(1<<3);}
 #define DisSaturday     {disp_buf[16]&= ~((1<<2)|(1<<3));}
 #define Sunday          {disp_buf[16]|=(1<<5)|(1<<6);}

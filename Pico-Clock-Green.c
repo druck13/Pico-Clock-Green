@@ -246,6 +246,72 @@ bool repeating_timer_callback_ms(struct repeating_timer *t) { // 1ms enter once
     }
     if(gpio_get(UP) == 0) // +label
     {
+        UP_cnt++;
+    }
+    else
+    {
+        // If the time is less than 300ms, it is judged as a short press.
+        // Short press the + and - keys to change the state of the function. 
+        if(UP_cnt>50 && UP_cnt < 300)
+        {
+            UP_cnt = 0;
+            No_operation_count = 0;
+            if(set_id == 0)
+            {
+                temp_sta = !temp_sta;
+                if(temp_sta == 0)
+                {
+                    dis_C_flag;
+                    dis_F_flag_close;
+                }
+                else
+                {
+                    dis_C_flag_close;
+                    dis_F_flag;
+                }
+            }
+            if(beep_flag == 1) // The key sound can set the flag bit 
+            {
+                beep_sta = !beep_sta;
+            }
+            
+            beep_start_judge();
+            if(scroll_flag == 1)// Scroll switch to set flag bit 
+            {
+                scroll_sta = !scroll_sta;
+                if(scroll_sta != 0)
+                {
+                    dis_move_open;
+                }
+                else
+                {
+                    dis_move_close;
+                }
+            }
+            Alarm_set(UP_flag);
+			Timing_set(UP_flag);
+			Time_set(UP_flag);
+            if(Full_time_flag == 1)
+            {
+                Full_time_sta = !Full_time_sta;
+            }
+        }
+        else if(UP_cnt >300&&set_id == 0) // More than 300ms is judged as a long press 
+        {
+            if(set_id == 0)
+            {
+                UP_Key_flag = 1;
+                UP_id = 1;
+                set_id ++ ;
+            }
+            UP_cnt = 0;
+            beep_start_judge();
+        }
+
+        else UP_cnt = 0;
+    }
+    if(gpio_get(DOWN) == 0) // -label
+    {
        Exit_cnt++;
     }
     else
