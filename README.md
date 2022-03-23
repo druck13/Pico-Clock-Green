@@ -7,7 +7,7 @@ It is supplied under the BSD-3-clause license, as the original on the WaveShare 
 
 Please see https://www.waveshare.com/wiki/Pico-Clock-Green for full details.
 
-I have no affiliation with WaveShare, and cannot offer support for the clock on any other products.
+I have no affiliation with WaveShare, and cannot offer support for the clock or any other products.
 
 New Features
 ------------
