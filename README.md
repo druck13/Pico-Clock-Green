@@ -12,7 +12,7 @@ I have no affiliation with WaveShare, and cannot offer support for the clock on 
 New Features
 ------------
 * A 3rd level of dimming in very low light levels - this may allow you to sleep with the clock next to the bed!
-* An improved number 7, instead of the horrible default hook shape.
+* An improved the look of the 4 and 7 digits
 
 Code Changes
 ------------
