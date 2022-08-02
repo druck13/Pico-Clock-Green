@@ -31,3 +31,4 @@ Future Enhancements
 * Use the middle button short press to toggle between time, day/month (or month/day if set to F) and temperature, returning to time after 10 seconds.
 * Think of a button combination to also allow display of light level and voltage.
 * Add DST rules.
+* Preserve alarm on/off state over power loss
