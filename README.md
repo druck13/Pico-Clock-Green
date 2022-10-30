@@ -27,6 +27,8 @@ The clock can be reprogrammed by connecting the external USB socket to a compute
 
 Future Enhancements
 -------------------
+* Hysteresis on dimming thresholds to prevent flicking.
+* Preserve alarm on/off state over loss of power.
 * Move the C/F temperature unit selection to the top button set-up sequence.
 * Use the middle button short press to toggle between time, day/month (or month/day if set to F) and temperature, returning to time after 10 seconds.
 * Think of a button combination to also allow display of light level and voltage.
