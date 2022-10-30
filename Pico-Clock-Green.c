@@ -1125,7 +1125,7 @@ void dis_scroll()
             display_char(90, '.');
             display_char(92, temp_low/10+0x30);
             display_char(97, temp_low%10+0x30);
-            display_char(102,'T');
+            display_char(102,'F');
         }
         
         scroll_show_flag = 0;
